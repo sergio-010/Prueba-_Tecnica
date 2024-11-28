@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { INITIAL_VALUES, validationSchema } from '../helpers/createBrand.helper';
-
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export default function StepsForm() {
     const [currentStep, setCurrentStep] = useState(1);
@@ -44,10 +50,36 @@ export default function StepsForm() {
 
     return (
         <div className="flex justify-center items-center min-h-screen">
-            <form
-                onSubmit={formik.handleSubmit}
-                className="w-full max-w-lg p-6 rounded-xl border shadow-md"
-            >
+            <div className="w-full max-w-lg p-6 rounded-xl border shadow-md">
+                {/* Breadcrumb */}
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink
+                                className={currentStep === 1 ? "text-blue-500" : "text-gray-500"}
+                            >
+                                Paso 1
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink
+                                className={currentStep === 2 ? "text-blue-500" : "text-gray-500"}
+                            >
+                                Paso 2
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink
+                                className={currentStep === 3 ? "text-blue-500" : "text-gray-500"}
+                            >
+                                Paso 3
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+
                 <h1 className="text-2xl font-bold text-center uppercase mb-4">
                     {currentStep === 1
                         ? "Paso 1: Nombre de la Marca"
@@ -60,7 +92,6 @@ export default function StepsForm() {
                 {currentStep === 1 && (
                     <div className="mb-4">
                         <label htmlFor="brand" className="block text-sm font-medium">
-                            Nombre de la marca
                         </label>
                         <input
                             id="brand"
@@ -87,7 +118,6 @@ export default function StepsForm() {
                             htmlFor="trademarkOwner"
                             className="block text-sm font-medium text-gray-700"
                         >
-                            Titular de la marca
                         </label>
                         <input
                             id="trademarkOwner"
@@ -154,7 +184,7 @@ export default function StepsForm() {
                         </button>
                     )}
                 </div>
-            </form>
+            </div>
         </div>
     );
 }
