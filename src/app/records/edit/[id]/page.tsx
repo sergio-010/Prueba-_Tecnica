@@ -1,29 +1,24 @@
-import { getBrand } from "@/app/actions";
-import Form from "../../create/components/Form";
 
-export default async function EditBrandPage({
-    params,
-}: {
-    params: Promise<{ id: string }>
-}) {
-    const { id } = await params;
+import { getBrands } from "@/app/actions";
+import Table from "@/components/Table";
 
-    const { brand, error } = await getBrand(Number(id));
+interface Props {
+    searchParams: Promise<{ page: string | undefined }>
+}
 
-    if (!brand || error) {
-        return (
-            <div>
-                <h1>{error || "No se encontró la marca"}</h1>
-            </div>
-        );
-    }
+export default async function PageRecords({ searchParams }: Props) {
+    const page = (await searchParams).page;
+    const currentPage = page ? Number(page) : 1;
+
+    const { brands, totalPages } = await getBrands({ take: 6, skip: currentPage });
 
     return (
-        <div>
-            <Form
-                isEditing
-                brandData={brand}
+        <>
+            <Table
+                brands={brands}
+                page={currentPage}
+                totalPages={totalPages}
             />
-        </div>
+        </>
     );
 }
