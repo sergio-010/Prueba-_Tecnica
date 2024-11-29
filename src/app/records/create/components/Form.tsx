@@ -223,7 +223,7 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                         <p className="text-sm text-gray-700 mb-2">
                             <strong>Nombre de la marca:</strong> {formik.values.brand}
                         </p>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-gray-700 mb-2">
                             <strong>Titular de la marca:</strong> {formik.values.trademarkOwner}
                         </p>
                         <p className="text-sm text-gray-700">
