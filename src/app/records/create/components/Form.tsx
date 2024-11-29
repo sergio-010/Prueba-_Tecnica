@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from "react";
-import { useFormik } from "formik";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Brand } from "@prisma/client";
+import { useFormik } from "formik";
+import { createBrand, updateBrand } from "@/app/actions";
 import { INITIAL_VALUES, validationSchema } from '../helpers/createBrand.helper';
 import {
     Breadcrumb,
@@ -12,10 +14,25 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export default function StepsForm() {
+interface Props {
+    isEditing?: boolean;
+    brandData?: Brand | null;
+}
+
+export default function StepsForm({ isEditing = false, brandData = null }: Props) {
+    const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
+
+    useEffect(() => {
+        if (brandData) {
+            formik.setValues({
+                brand: brandData.brandName,
+                trademarkOwner: brandData.trademarkOwner
+            })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [brandData]);
 
     const formik = useFormik({
         initialValues: INITIAL_VALUES,
@@ -24,10 +41,33 @@ export default function StepsForm() {
             setLoading(true);
             try {
                 console.log("Form values:", values);
-                alert(`Datos Registrados: ${JSON.stringify(values, null, 2)}`);
-                router.push("/");
+
+                if (isEditing) {
+                    const { brand, error } = await updateBrand(Number(brandData?.id), {
+                        brandName: values.brand,
+                        trademarkOwner: values.trademarkOwner,
+                        status: false
+                    });
+
+                    if (!brand) {
+                        throw new Error(error);
+                    }
+                } else {
+                    const { brand, error } = await createBrand({
+                        brandName: values.brand,
+                        trademarkOwner: values.trademarkOwner,
+                        status: false
+                    });
+
+                    if (!brand) {
+                        throw new Error(error);
+                    }
+                }
+
+                router.push("/records");
             } catch (error) {
-                console.error("Error registrando la marca:", error);
+                const errMsg = error instanceof Error ? error.message : "Ups ocurrio un error al registrar la marca";
+                console.log(errMsg);
             } finally {
                 setLoading(false);
             }
@@ -43,6 +83,13 @@ export default function StepsForm() {
                 return;
             }
         }
+        if (currentStep === 2) {
+            if (!formik.values.trademarkOwner) {
+                formik.setFieldTouched("trademarkOwner", true);
+                formik.validateField("trademarkOwner");
+                return;
+            }
+        }
         setCurrentStep(currentStep + 1);
     };
 
@@ -50,13 +97,16 @@ export default function StepsForm() {
 
     return (
         <div className="flex justify-center items-center min-h-screen">
-            <div className="w-full max-w-lg p-6 rounded-xl border shadow-md">
+            <form
+                onSubmit={formik.handleSubmit}
+                className="w-full max-w-lg p-6 rounded-xl border shadow-md"
+            >
                 {/* Breadcrumb */}
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                className={currentStep === 1 ? "text-blue-500" : "text-gray-500"}
+                                className={currentStep === 1 ? "text-slate-700" : "text-gray-100"}
                             >
                                 Paso 1
                             </BreadcrumbLink>
@@ -64,7 +114,7 @@ export default function StepsForm() {
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                className={currentStep === 2 ? "text-blue-500" : "text-gray-500"}
+                                className={currentStep === 2 ? "text-slate-700" : "text-gray-100"}
                             >
                                 Paso 2
                             </BreadcrumbLink>
@@ -72,7 +122,7 @@ export default function StepsForm() {
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                className={currentStep === 3 ? "text-blue-500" : "text-gray-500"}
+                                className={currentStep === 3 ? "text-slate-700" : "text-gray-100"}
                             >
                                 Paso 3
                             </BreadcrumbLink>
@@ -118,6 +168,7 @@ export default function StepsForm() {
                             htmlFor="trademarkOwner"
                             className="block text-sm font-medium text-gray-700"
                         >
+                            Titular de la Marca
                         </label>
                         <input
                             id="trademarkOwner"
@@ -138,7 +189,6 @@ export default function StepsForm() {
                         )}
                     </div>
                 )}
-
                 {/* Step 3: Confirmation */}
                 {currentStep === 3 && (
                     <div className="mb-4">
@@ -168,6 +218,7 @@ export default function StepsForm() {
                             type="button"
                             onClick={handleNext}
                             className="bg-slate-700 text-white py-2 px-4 rounded hover:bg-slate-800"
+                            disabled={currentStep === 2 && !formik.values.trademarkOwner} // Disable if no trademark owner
                         >
                             Siguiente
                         </button>
@@ -184,7 +235,7 @@ export default function StepsForm() {
                         </button>
                     )}
                 </div>
-            </div>
+            </form>
         </div>
     );
 }

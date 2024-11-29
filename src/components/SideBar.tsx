@@ -12,7 +12,7 @@ function SideBar() {
     return (
         <div
             className={`
-                absolute top-0 w-full h-full max-w-72 p-4 bg-red-500 transition-all ease-in-out duration-300  z-50
+                absolute top-0 w-full h-full max-w-72 p-4 text-white bg-slate-700 transition-all ease-in-out duration-300  z-50
                 lg:static ${toggleSidebar ? 'left-0' : '-left-72 lg:max-w-20'}
             `}
         >

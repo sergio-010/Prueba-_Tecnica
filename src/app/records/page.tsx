@@ -1,17 +1,13 @@
-'use client'
-import Table from "@/components/Table";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { getBrands } from "../actions";
 
-export default function PageRecords() {
-    const router = useRouter();
+import Table from "@/components/Table";
+
+export default async function PageRecords() {
+    const { brands } = await getBrands({ take: 6, skip: 0 });
 
     return (
-        <div>
-            <Table />
-            <Button className="mt-4" onClick={() => router.push('/records/create')}>
-                Crear Registro
-            </Button>
-        </div>
+        <>
+            <Table brands={brands} />
+        </>
     );
 }

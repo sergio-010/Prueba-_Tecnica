@@ -1,0 +1,9 @@
+-- CreateTable
+CREATE TABLE "Brand" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "brandName" TEXT NOT NULL,
+    "trademarkOwner" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
