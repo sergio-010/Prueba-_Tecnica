@@ -28,11 +28,12 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
         if (brandData) {
             formik.setValues({
                 brand: brandData.brandName,
-                trademarkOwner: brandData.trademarkOwner
-            })
+                trademarkOwner: brandData.trademarkOwner,
+                status: brandData.status ? "activo" : "inactivo", // Asegúrate de mapear el booleano a un string válido
+            });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [brandData]);
+
 
     const formik = useFormik({
         initialValues: INITIAL_VALUES,
@@ -106,7 +107,7 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                     <BreadcrumbList>
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                className={currentStep === 1 ? "text-slate-700" : "text-gray-100"}
+                                className={currentStep === 1 ? "text-slate-700" : "text-gray-300"}
                             >
                                 Paso 1
                             </BreadcrumbLink>
@@ -114,7 +115,7 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                className={currentStep === 2 ? "text-slate-700" : "text-gray-100"}
+                                className={currentStep === 2 ? "text-slate-700" : "text-gray-300"}
                             >
                                 Paso 2
                             </BreadcrumbLink>
@@ -122,7 +123,7 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink
-                                className={currentStep === 3 ? "text-slate-700" : "text-gray-100"}
+                                className={currentStep === 3 ? "text-slate-700" : "text-gray-300"}
                             >
                                 Paso 3
                             </BreadcrumbLink>
@@ -160,10 +161,10 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                         )}
                     </div>
                 )}
-
-                {/* Step 2: Trademark Owner */}
+                {/* Step 2: Trademark Owner and Status */}
                 {currentStep === 2 && (
                     <div className="mb-4">
+                        {/* Input para Titular de la Marca */}
                         <label
                             htmlFor="trademarkOwner"
                             className="block text-sm font-medium text-gray-700"
@@ -187,6 +188,32 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                                 {formik.errors.trademarkOwner}
                             </p>
                         )}
+
+                        {/* Select para Estado */}
+                        <label
+                            htmlFor="status"
+                            className="block text-sm font-medium text-gray-700 mt-4"
+                        >
+                            Estado
+                        </label>
+                        <select
+                            id="status"
+                            name="status"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.status}
+                            className={`mt-1 block w-full p-2 border ${formik.touched.status && formik.errors.status
+                                ? "border-red-500"
+                                : "border-gray-300"
+                                } rounded-md shadow-sm`}
+                        >
+                            <option value="">Selecciona el estado</option>
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                        {formik.touched.status && formik.errors.status && (
+                            <p className="text-red-500 text-sm mt-1">{formik.errors.status}</p>
+                        )}
                     </div>
                 )}
                 {/* Step 3: Confirmation */}
@@ -197,6 +224,9 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                         </p>
                         <p className="text-sm text-gray-700">
                             <strong>Titular de la marca:</strong> {formik.values.trademarkOwner}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                            <strong>Estado:</strong> {formik.values.status}
                         </p>
                     </div>
                 )}
