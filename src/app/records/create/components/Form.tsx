@@ -32,6 +32,7 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                 status: brandData.status ? "activo" : "inactivo", // Asegúrate de mapear el booleano a un string válido
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [brandData]);
 
 
