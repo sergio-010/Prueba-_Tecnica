@@ -1,14 +1,12 @@
 import { getBrand } from "@/app/actions";
-
 import Form from "../../create/components/Form";
 
-interface Props {
-    params: { id: string };
-}
-
-
-export default async function EditBransPage({ params }: Props) {
-    const { id } = params;
+export default async function EditBrandPage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
+    const { id } = await params;
 
     const { brand, error } = await getBrand(Number(id));
 
@@ -23,7 +21,7 @@ export default async function EditBransPage({ params }: Props) {
     return (
         <div>
             <Form
-                isEditing={true}
+                isEditing
                 brandData={brand}
             />
         </div>
