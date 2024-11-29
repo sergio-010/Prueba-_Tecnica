@@ -48,7 +48,7 @@ export default function StepsForm({ isEditing = false, brandData = null }: Props
                     const { brand, error } = await updateBrand(Number(brandData?.id), {
                         brandName: values.brand,
                         trademarkOwner: values.trademarkOwner,
-                        status: false
+                        status: values.status === "activo"
                     });
 
                     if (!brand) {
